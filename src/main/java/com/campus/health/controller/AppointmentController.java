@@ -1,4 +1,4 @@
-﻿package com.campus.health.controller;
+package com.campus.health.controller;
 
 import com.campus.health.common.ApiResponse;
 import com.campus.health.dto.AppointmentRequest;

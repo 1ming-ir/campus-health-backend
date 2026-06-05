@@ -1,4 +1,4 @@
-﻿package com.campus.health.service;
+package com.campus.health.service;
 
 import com.campus.health.dto.ConsultationRequest;
 import java.util.List;

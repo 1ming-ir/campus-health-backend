@@ -1,4 +1,4 @@
-﻿package com.campus.health.entity;
+package com.campus.health.entity;
 
 import lombok.Data;
 

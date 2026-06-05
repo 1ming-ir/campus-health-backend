@@ -1,4 +1,4 @@
-﻿package com.campus.health.mapper;
+package com.campus.health.mapper;
 
 import com.campus.health.entity.Doctor;
 import java.util.List;
