@@ -1,0 +1,1 @@
+package com.campus.health;import org.springframework.boot.SpringApplication;import org.springframework.boot.autoconfigure.SpringBootApplication;@SpringBootApplication public class CampusHealthApplication{public static void main(String[]args){SpringApplication.run(CampusHealthApplication.class,args);}}

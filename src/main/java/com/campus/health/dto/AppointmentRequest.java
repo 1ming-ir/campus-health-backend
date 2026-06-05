@@ -1,0 +1,1 @@
+package com.campus.health.dto;import lombok.Data;@Data public class AppointmentRequest{private Long studentId=1L;private Long doctorId;private String appointmentDate;private String timeSlot;private String reason;}
