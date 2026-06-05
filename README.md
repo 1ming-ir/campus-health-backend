@@ -83,3 +83,24 @@ $env:AI_MODEL='gpt-4o-mini'
 - `GET /api/admin/users`
 - `GET /api/admin/doctors`
 - `GET /api/admin/articles`
+
+## Railway 启动配置
+
+项目包含 `Procfile`：
+
+```text
+web: java -jar target/*.jar
+```
+
+Railway 构建 Maven 项目后会使用该命令启动 SpringBoot 后端。
+
+项目同时包含 `railway.json`，显式配置 Railway 使用 Nixpacks 构建、`mvn -DskipTests package` 打包、`java -jar target/*.jar` 启动，并使用 `/api/health` 作为健康检查路径。
+
+## Docker / Railway 容器构建
+
+项目包含 `Dockerfile`，可使用 Maven 17 镜像构建 jar，再用 JRE 17 运行。Railway 如果检测到 Dockerfile，可以按容器方式部署，降低本地没有 Maven/JDK 时的部署风险。
+
+```powershell
+docker build -t campus-health-backend .
+docker run -p 8080:8080 campus-health-backend
+```
