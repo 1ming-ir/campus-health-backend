@@ -1,4 +1,4 @@
-﻿package com.campus.health.config;
+package com.campus.health.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,15 +18,18 @@ public class RoleInterceptor implements HandlerInterceptor {
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             return true;
         }
+
         String path = request.getRequestURI();
         String requiredRole = requiredRole(path, request.getMethod());
         if (requiredRole == null) {
             return true;
         }
+
         String role = roleFromToken(request.getHeader("Authorization"));
         if (requiredRole.equals(role)) {
             return true;
         }
+
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
@@ -70,6 +73,7 @@ public class RoleInterceptor implements HandlerInterceptor {
         if (authorization == null || !authorization.startsWith("Bearer demo-token-")) {
             return null;
         }
+
         String suffix = authorization.substring("Bearer demo-token-".length()).toUpperCase();
         if ("STUDENT".equals(suffix) || "DOCTOR".equals(suffix) || "ADMIN".equals(suffix)) {
             return suffix;
