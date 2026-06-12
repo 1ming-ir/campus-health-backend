@@ -1,4 +1,4 @@
-﻿package com.campus.health.controller;
+package com.campus.health.controller;
 
 import com.campus.health.common.ApiResponse;
 import com.campus.health.dto.ConsultationRequest;
@@ -32,6 +32,7 @@ public class ConsultationController {
     @PostMapping
     public ApiResponse<Map<String, Object>> create(@RequestBody ConsultationRequest req) {
         String advice = ai.generateAdvice(req);
+
         ConsultationRecord record = new ConsultationRecord();
         record.setStudentId(req.getStudentId() == null ? 1L : req.getStudentId());
         record.setSymptom(req.getSymptom());
@@ -64,6 +65,7 @@ public class ConsultationController {
         if (!StringUtils.hasText(reply)) {
             return ApiResponse.fail("医生补充建议不能为空");
         }
+
         consultationMapper.updateDoctorReply(id, reply.trim());
         return ApiResponse.ok("医生建议已保存");
     }
