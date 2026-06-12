@@ -5,7 +5,7 @@
     "buildCommand": "mvn -DskipTests package"
   },
   "deploy": {
-    "startCommand": "java -jar target/*.jar",
+    "startCommand": "sh -c 'java -jar target/*.jar'",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 3
   }
