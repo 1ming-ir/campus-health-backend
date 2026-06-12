@@ -1,1 +1,1 @@
-﻿web: java -jar target/*.jar
+web: sh -c 'java -jar target/*.jar'
