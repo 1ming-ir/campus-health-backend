@@ -11,4 +11,7 @@ public class Doctor {
     private String title;
     private String specialty;
     private String scheduleText;
+    private String phone;
+    private String introduction;
+    private String status;
 }

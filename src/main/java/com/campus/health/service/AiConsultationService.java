@@ -29,10 +29,10 @@ public class AiConsultationService {
             try {
                 String aiAdvice = callLargeLanguageModel(req);
                 if (StringUtils.hasText(aiAdvice)) {
-                    return ensureMedicalDisclaimer(aiAdvice);
+                    return cleanMarkdown(ensureMedicalDisclaimer(aiAdvice));
                 }
             } catch (RuntimeException ignored) {
-                // Network or API failures must not block the student demo workflow.
+                // API failure falls back to local safety advice so the demo flow remains available.
             }
         }
         return generateFallbackAdvice(req);
@@ -48,12 +48,9 @@ public class AiConsultationService {
             "messages", List.of(
                 Map.of(
                     "role", "system",
-                    "content", "你是校园健康咨询助手，只能提供健康建议、风险提示和就医建议，不能做正式医学诊断。遇到严重症状必须建议尽快线下就医或急救。"
+                    "content", "浣犳槸鏍″洯鍋ュ悍鍜ㄨ鍔╂墜锛屽彧鑳芥彁渚涘仴搴峰挩璇€侀闄╂彁绀哄拰灏卞尰寤鸿锛屼笉鑳藉仛姝ｅ紡鍖诲璇婃柇銆傝涓嶈浣跨敤 Markdown 绗﹀彿锛屼笉瑕佽緭鍑?###銆?*銆?--銆傝鎸夊浐瀹氬皬鏍囬杈撳嚭锛氬垵姝ュ垽鏂€佹棩甯告姢鐞嗗缓璁€侀渶瑕佽瀵熺殑椋庨櫓淇″彿銆佹槸鍚﹀缓璁绾︽牎鍖婚櫌銆佸厤璐ｅ０鏄庛€?
                 ),
-                Map.of(
-                    "role", "user",
-                    "content", buildPrompt(req)
-                )
+                Map.of("role", "user", "content", buildPrompt(req))
             ),
             "temperature", 0.2
         );
@@ -79,33 +76,46 @@ public class AiConsultationService {
     }
 
     private String buildPrompt(ConsultationRequest req) {
-        return "请根据以下学生症状生成初步健康建议，包含：可能的日常护理建议、需要观察的风险信号、是否建议预约校医院。"
-            + "症状描述：" + valueOrDefault(req.getSymptom(), "未填写")
-            + "；持续时间：" + valueOrDefault(req.getDuration(), "未填写")
-            + "；严重程度：" + valueOrDefault(req.getSeverity(), "未填写")
-            + "；用药情况：" + valueOrDefault(req.getMedicineUsed(), "未说明")
-            + "。请明确说明本建议仅供健康咨询参考，不构成正式医学诊断。";
+        return "璇锋牴鎹互涓嬪鐢熺棁鐘剁敓鎴愬垵姝ュ仴搴峰缓璁€?
+            + "鐥囩姸鎻忚堪锛? + valueOrDefault(req.getSymptom(), "鏈～鍐?)
+            + "锛涙寔缁椂闂达細" + valueOrDefault(req.getDuration(), "鏈～鍐?)
+            + "锛涗弗閲嶇▼搴︼細" + valueOrDefault(req.getSeverity(), "鏈～鍐?)
+            + "锛涙槸鍚︾敤鑽細" + valueOrDefault(req.getMedicineUsed(), "鏈鏄?)
+            + "锛涜嵂鍝佸悕绉帮細" + valueOrDefault(req.getMedicineName(), "鏃?)
+            + "銆傝鏄庣‘璇存槑鏈缓璁粎渚涘仴搴峰挩璇㈠弬鑰冿紝涓嶆瀯鎴愭寮忓尰瀛﹁瘖鏂€?;
     }
 
     private String generateFallbackAdvice(ConsultationRequest req) {
-        String symptom = valueOrDefault(req.getSymptom(), "未填写具体症状");
-        String duration = valueOrDefault(req.getDuration(), "未填写持续时间");
-        String severity = valueOrDefault(req.getSeverity(), "未填写严重程度");
-        String medicine = valueOrDefault(req.getMedicineUsed(), "未说明是否用药");
-        String riskHint = "轻度".equals(severity) ? "当前描述偏轻症，可先观察变化。" : "症状程度较高，建议尽快到校医院或正规医疗机构进一步评估。";
+        String symptom = valueOrDefault(req.getSymptom(), "鏈～鍐欏叿浣撶棁鐘?);
+        String duration = valueOrDefault(req.getDuration(), "鏈～鍐欐寔缁椂闂?);
+        String severity = valueOrDefault(req.getSeverity(), "鏈～鍐欎弗閲嶇▼搴?);
+        String medicine = valueOrDefault(req.getMedicineUsed(), "鏈鏄庢槸鍚︾敤鑽?);
+        String medicineName = valueOrDefault(req.getMedicineName(), "鏃?);
+        String riskHint = "閲嶅害".equals(severity)
+            ? "褰撳墠涓ラ噸绋嬪害杈冮珮锛屽缓璁敖蹇埌鏍″尰闄㈡垨姝ｈ鍖荤枟鏈烘瀯杩涗竴姝ヨ瘎浼般€?
+            : "褰撳墠淇℃伅鍙厛瑙傚療鍙樺寲锛屼絾浠嶉渶鍏虫敞鐥囩姸鏄惁鍔犻噸銆?;
 
-        return "根据你描述的症状：" + symptom + "；持续时间：" + duration + "；严重程度：" + severity + "；用药情况：" + medicine + "。"
-            + riskHint
-            + "建议先保持休息、补充水分，记录体温和症状变化；如出现持续高热、呼吸困难、剧烈疼痛、意识异常、皮疹迅速扩散或症状明显加重，请及时前往校医院或拨打急救电话。"
-            + "当前未配置可用的大语言模型接口，系统已使用本地安全兜底建议。"
-            + "本建议仅供健康咨询参考，不构成正式医学诊断。";
+        return "鍒濇鍒ゆ柇锛氭牴鎹綘鎻忚堪鐨勭棁鐘垛€? + symptom + "鈥濓紝鎸佺画鏃堕棿涓? + duration + "锛屼弗閲嶇▼搴︿负" + severity + "锛岀敤鑽儏鍐典负" + medicine + "锛岃嵂鍝佸悕绉颁负" + medicineName + "銆? + riskHint + "\n"
+            + "鏃ュ父鎶ょ悊寤鸿锛氫繚璇佷紤鎭紝琛ュ厖姘村垎锛岄伩鍏嶇啲澶溿€侀ギ閰掋€佸墽鐑堣繍鍔ㄥ拰杈涜荆娌硅吇椋熺墿锛岃褰曚綋娓╁拰鐥囩姸鍙樺寲銆俓n"
+            + "闇€瑕佽瀵熺殑椋庨櫓淇″彿锛氬鍑虹幇鎸佺画楂樼儹銆佸懠鍚稿洶闅俱€佽兏鐥涖€佹剰璇嗗紓甯搞€佸墽鐑堢柤鐥涖€佺毊鐤瑰揩閫熸墿鏁ｃ€佹槑鏄捐劚姘存垨鐥囩姸鎸佺画鍔犻噸锛岃绔嬪嵆绾夸笅灏卞尰銆俓n"
+            + "鏄惁寤鸿棰勭害鏍″尰闄細濡傜棁鐘惰秴杩?24-48 灏忔椂鏈紦瑙ｏ紝鎴栧奖鍝嶅涔犵敓娲伙紝寤鸿棰勭害鏍″尰闄㈣繘涓€姝ヨ瘎浼般€俓n"
+            + "鍏嶈矗澹版槑锛氭湰寤鸿浠呬緵鍋ュ悍鍜ㄨ鍙傝€冿紝涓嶆瀯鎴愭寮忓尰瀛﹁瘖鏂€?;
     }
 
     private String ensureMedicalDisclaimer(String advice) {
-        if (advice.contains("不构成正式医学诊断") || advice.contains("不构成医学诊断")) {
+        if (advice.contains("涓嶆瀯鎴愭寮忓尰瀛﹁瘖鏂?) || advice.contains("涓嶆瀯鎴愬尰瀛﹁瘖鏂?)) {
             return advice;
         }
-        return advice + " 本建议仅供健康咨询参考，不构成正式医学诊断。";
+        return advice + "\n鍏嶈矗澹版槑锛氭湰寤鸿浠呬緵鍋ュ悍鍜ㄨ鍙傝€冿紝涓嶆瀯鎴愭寮忓尰瀛﹁瘖鏂€?;
+    }
+
+    private String cleanMarkdown(String text) {
+        return text.replace("###", "")
+            .replace("##", "")
+            .replace("**", "")
+            .replace("---", "")
+            .replace("```", "")
+            .trim();
     }
 
     private boolean hasRealAiConfig() {

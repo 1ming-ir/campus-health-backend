@@ -1,4 +1,4 @@
-﻿# campus-health-backend
+# campus-health-backend
 
 校园健康问诊与咨询系统后端，采用 SpringBoot 3 + MyBatis 架构，提供学生、医生、管理员三类角色所需 REST API。
 
