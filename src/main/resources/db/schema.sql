@@ -1,4 +1,4 @@
-﻿DROP TABLE IF EXISTS appointments;
+DROP TABLE IF EXISTS appointments;
 DROP TABLE IF EXISTS consultation_records;
 DROP TABLE IF EXISTS doctors;
 DROP TABLE IF EXISTS health_articles;
