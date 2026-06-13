@@ -11,4 +11,5 @@ public class Appointment {
     private String timeSlot;
     private String reason;
     private String status;
+    private String createdAt;
 }

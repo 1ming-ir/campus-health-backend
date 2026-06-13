@@ -18,4 +18,5 @@ public class User {
     private String allergyHistory;
     private String medicalHistory;
     private String emergencyContact;
+    private String createdAt;
 }

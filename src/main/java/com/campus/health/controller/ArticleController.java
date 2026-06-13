@@ -22,8 +22,7 @@ public class ArticleController {
     private final MedicineMapper medicineMapper;
     private final AnnouncementMapper announcementMapper;
 
-    public ArticleController(HealthArticleMapper articleMapper, DoctorMapper doctorMapper,
-                             MedicineMapper medicineMapper, AnnouncementMapper announcementMapper) {
+    public ArticleController(HealthArticleMapper articleMapper, DoctorMapper doctorMapper, MedicineMapper medicineMapper, AnnouncementMapper announcementMapper) {
         this.articleMapper = articleMapper;
         this.doctorMapper = doctorMapper;
         this.medicineMapper = medicineMapper;
@@ -37,7 +36,7 @@ public class ArticleController {
 
     @GetMapping("/doctors")
     public ApiResponse<List<Doctor>> doctors() {
-        return ApiResponse.ok(doctorMapper.findAll());
+        return ApiResponse.ok(doctorMapper.findEnabled());
     }
 
     @GetMapping("/medicines")

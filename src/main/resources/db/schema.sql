@@ -96,28 +96,28 @@ CREATE TABLE announcements (
 );
 
 INSERT INTO users(username,password,real_name,role,phone,status,college,class_name,gender,age,allergy_history,medical_history,emergency_contact) VALUES
-('student','123456','寮犲悓瀛?,'STUDENT','13800000001','ENABLED','淇℃伅宸ョ▼瀛﹂櫌','杞欢 2301','濂?,20,'鏃?,'鏃?,'瀹堕暱 13800000000'),
-('doctor','123456','鏉庡尰鐢?,'DOCTOR','13800000002','ENABLED',NULL,NULL,'鐢?,36,NULL,NULL,NULL),
-('admin','123456','绠＄悊鍛?,'ADMIN','13800000003','ENABLED',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+('student','123456','张同学','STUDENT','13800000001','ENABLED','信息工程学院','软件2301','女',20,'无','无','家属 13800000000'),
+('doctor','123456','李医生','DOCTOR','13800000002','ENABLED',NULL,NULL,'男',36,NULL,NULL,NULL),
+('admin','123456','管理员','ADMIN','13800000003','ENABLED',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 
 INSERT INTO doctors(user_id,department,title,specialty,schedule_text,phone,introduction,status) VALUES
-(2,'鍏ㄧ闂ㄨ瘖','涓绘不鍖诲笀','鎰熷啋鍙戠儹銆佽偁鑳冧笉閫傘€佸父瑙佺毊鑲ら棶棰?,'鍛ㄤ竴鑷冲懆浜?09:00-11:30锛?4:00-17:00','13800000002','璐熻矗鏍″洯甯歌杞荤棁鍜ㄨ銆侀绾﹁瘎浼板拰鍋ュ悍绉戞櫘銆?,'ENABLED');
+(2,'全科门诊','主治医师','感冒发热、肠胃不适、常见皮肤问题','周一至周五 09:00-11:30，14:00-17:00','13800000002','负责校医院常见病咨询、预约复核和健康指导。','ENABLED');
 
-INSERT INTO consultation_records(student_id,doctor_id,symptom,duration,severity,medicine_used,medicine_name,ai_advice,doctor_reply,status,deleted,archived) VALUES
-(1,1,'鍜界棝銆佸挸鍡戒袱澶╋紝杞诲井鍙戠儹','2澶?,'杞诲害','鏈敤鑽?,'鏃?,'鍒濇鍒ゆ柇锛氬彲鑳戒负鏅€氫笂鍛煎惛閬撲笉閫傦紝璇疯瀵熶綋娓╁拰鐥囩姸鍙樺寲銆俓n鏃ュ父鎶ょ悊寤鸿锛氬楗按銆佷繚璇佷紤鎭€侀伩鍏嶇啲澶溿€俓n闇€瑕佽瀵熺殑椋庨櫓淇″彿锛氬鎸佺画楂樼儹鎴栧懠鍚稿洶闅撅紝璇峰強鏃剁嚎涓嬪氨鍖汇€俓n鏄惁寤鸿棰勭害鏍″尰闄細濡?48 灏忔椂鏈紦瑙ｏ紝寤鸿棰勭害鏍″尰闄€俓n鍏嶈矗澹版槑锛氭湰寤鸿浠呬緵鍋ュ悍鍜ㄨ鍙傝€冿紝涓嶆瀯鎴愭寮忓尰瀛﹁瘖鏂€?,'鍙埌鏍″尰闄㈠叏绉戦棬璇婃祴閲忎綋娓╁苟璇勪及鏄惁闇€瑕佺敤鑽€?,'REPLIED',false,false);
+INSERT INTO consultation_records(student_id,doctor_id,symptom,duration,severity,medicine_used,medicine_name,ai_advice,doctor_reply,status,deleted,archived,replied_at) VALUES
+(1,1,'咽痛咳嗽，体温37.8℃，无明显胸闷','2天','轻度','未用药',NULL,'初步判断：可能属于常见轻度上呼吸道不适。\n日常护理建议：注意休息，适量饮水，避免熬夜。\n需要观察的风险信号：若高热不退、呼吸困难或胸痛，应及时线下就医。\n是否建议预约校医院：如 48 小时无缓解，建议预约校医院。\n免责声明：仅供健康咨询参考。','建议继续观察体温变化，若发热超过38.5℃或咳嗽明显加重，请线下就医。','REPLIED',false,false,CURRENT_TIMESTAMP);
 
 INSERT INTO appointments(student_id,doctor_id,appointment_date,time_slot,reason,status) VALUES
-(1,1,CURRENT_DATE,'涓婂崍 09:00-10:00','鍜冲椊鍙戠儹锛屽笇鏈涘尰鐢熻繘涓€姝ヨ瘎浼?,'PENDING');
+(1,1,CURRENT_DATE,'上午 09:00-10:00','咳嗽发热，希望医生进一步评估','PENDING');
 
 INSERT INTO health_articles(title,category,summary,content,status) VALUES
-('鏅€氭劅鍐掓姢鐞?,'鍛煎惛閬?,'浼戞伅銆佽ˉ姘淬€佽瀵熶綋娓╋紝璀︽儠鎸佺画楂樼儹銆?,'鏅€氭劅鍐掑鏁颁负鐥呮瘨鎰熸煋锛屽缓璁繚璇佺潯鐪犮€佽ˉ鍏呮按鍒嗭紝閬垮厤鍓х儓杩愬姩銆傚鍑虹幇鎸佺画楂樼儹銆佽兏闂锋皵鐭€佹剰璇嗗紓甯哥瓑鎯呭喌锛屽簲鍙婃椂鍒版牎鍖婚櫌鎴栨瑙勫尰鐤楁満鏋勫氨璇娿€?,'PUBLISHED'),
-('鑵规郴鏈熼棿楗寤鸿','鑲犺儍','娓呮贰楗骞惰鎯曡劚姘淬€?,'鑵规郴鏈熼棿寤鸿灏戦噺澶氭楗按锛岄€夋嫨绮ャ€侀潰鏉＄瓑娓呮贰椋熺墿锛岄伩鍏嶆补鑵诲拰鍒烘縺鎬чギ椋熴€傚鍑虹幇鏄庢樉鑴辨按銆佷究琛€銆佹寔缁吂鐥涳紝搴斿強鏃跺氨鍖汇€?,'PUBLISHED'),
-('鑰冭瘯鍛ㄥ帇鍔涜皟鑺?,'蹇冪悊鍋ュ悍','瑙勫緥浣滄伅锛屽繀瑕佹椂瀵绘眰甯姪銆?,'鑰冭瘯鍛ㄥ簲灏介噺淇濇寔瑙勫緥鐫＄湢锛屾媶鍒嗗涔犱换鍔★紝閬垮厤杩炵画鐔銆傝嫢鐒﹁檻銆佸け鐪犳垨鎯呯华浣庤惤鎸佺画褰卞搷瀛︿範鐢熸椿锛屽簲涓诲姩鑱旂郴杈呭鍛樻垨蹇冪悊鍜ㄨ涓績銆?,'PUBLISHED');
+('感冒发热的日常护理','常见症状','了解普通感冒、低热时的观察和护理方法。','普通感冒多与病毒感染有关。建议保持休息，适量饮水，避免熬夜。若出现高热不退、呼吸困难、胸痛或症状持续加重，应及时线下就医。','PUBLISHED'),
+('肠胃不适时如何饮食','肠胃不适','腹泻、胃胀、恶心时的饮食注意事项。','肠胃不适时建议少量多餐，选择清淡易消化食物，避免生冷、辛辣和油腻食物。若频繁呕吐、腹痛明显或脱水，应及时就医。','PUBLISHED'),
+('运动损伤后的初步处理','运动损伤','扭伤、拉伤后的初步处理方法。','运动损伤后应停止运动，早期可进行冷敷并抬高患处。若疼痛明显、活动受限或出现肿胀加重，应到校医院或正规医疗机构评估。','PUBLISHED');
 
 INSERT INTO medicines(name,category,usage_info,caution,prescription_required,status) VALUES
-('瀵逛箼閰版皑鍩洪厷','鎰熷啋鍙戠儹','鐢ㄤ簬鍙戠儹銆佽交涓害鐤肩棝鐨勫父瑙侀€€鐑晣鐥涚鏅€?,'閬垮厤閲嶅鏈嶇敤鍚悓绫绘垚鍒嗚嵂鐗╋紝鑲濆姛鑳藉紓甯歌€呴伒鍖诲槺銆?,'鍚?,'PUBLISHED'),
-('鍙ｆ湇琛ユ恫鐩?,'鑲犺儍鐢ㄨ嵂','鑵规郴鎴栧嚭姹楄緝澶氭椂鐢ㄤ簬琛ュ厖姘村垎鍜岀數瑙ｈ川銆?,'涓ラ噸鑴辨按銆佹寔缁憰鍚愭垨渚胯搴斿強鏃跺氨鍖汇€?,'鍚?,'PUBLISHED');
+('对乙酰氨基酚片','解热镇痛','用于普通发热或轻中度疼痛，需按说明书或医生建议使用。','避免与其他含同类成分的复方感冒药重复使用，肝功能异常者慎用。','非处方药','PUBLISHED'),
+('蒙脱石散','肠胃用药','用于腹泻时的辅助处理，按说明书冲服。','若腹泻伴高热、便血、明显脱水，应及时就医。','非处方药','PUBLISHED');
 
 INSERT INTO announcements(title,type,content,status) VALUES
-('鏍″尰闄㈤绾︽彁閱?,'鏍″尰闄㈤€氱煡','璇锋寜棰勭害鏃堕棿娈靛埌鏍″尰闄㈠氨璇婏紝濡傞渶鍙栨秷璇锋彁鍓嶅湪绯荤粺涓搷浣溿€?,'PUBLISHED'),
-('鑰冭瘯鍛ㄥ仴搴锋彁閱?,'鍋ュ悍鎻愰啋','鑰冭瘯鍛ㄦ敞鎰忚寰嬩綔鎭紝鍑虹幇鎸佺画澶辩湢銆佺劍铏戞垨韬綋涓嶉€傛椂璇峰強鏃跺姹傚府鍔┿€?,'PUBLISHED');
+('校医院门诊预约提醒','门诊通知','校医院工作日开放线上预约，请按预约时间段到院就诊。','PUBLISHED'),
+('近期呼吸道疾病健康提醒','健康提醒','近期气温变化较大，请注意保暖、规律作息，出现持续发热或呼吸困难应及时线下就医。','PUBLISHED');

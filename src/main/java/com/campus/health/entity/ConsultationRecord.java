@@ -17,4 +17,6 @@ public class ConsultationRecord {
     private String status;
     private Boolean deleted;
     private Boolean archived;
+    private String createdAt;
+    private String repliedAt;
 }

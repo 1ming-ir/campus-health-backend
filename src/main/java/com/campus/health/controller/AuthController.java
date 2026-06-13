@@ -3,7 +3,9 @@ package com.campus.health.controller;
 import com.campus.health.common.ApiResponse;
 import com.campus.health.dto.LoginRequest;
 import com.campus.health.dto.RegisterRequest;
+import com.campus.health.entity.Doctor;
 import com.campus.health.entity.User;
+import com.campus.health.mapper.DoctorMapper;
 import com.campus.health.mapper.UserMapper;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,22 +22,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 public class AuthController {
     private final UserMapper userMapper;
+    private final DoctorMapper doctorMapper;
 
-    public AuthController(UserMapper userMapper) {
+    public AuthController(UserMapper userMapper, DoctorMapper doctorMapper) {
         this.userMapper = userMapper;
+        this.doctorMapper = doctorMapper;
     }
 
     @PostMapping("/login")
     public ApiResponse<Map<String, Object>> login(@RequestBody LoginRequest req) {
         User user = userMapper.findByUsername(req.getUsername());
         if (user == null || !user.getPassword().equals(req.getPassword())) {
-            return ApiResponse.fail("璐﹀彿鎴栧瘑鐮侀敊璇?);
+            return ApiResponse.fail("账号或密码错误");
         }
-        if (req.getRole() != null && !req.getRole().equals(user.getRole())) {
-            return ApiResponse.fail("鎵€閫夎鑹蹭笌璐﹀彿鏉冮檺涓嶅尮閰?);
+        if (StringUtils.hasText(req.getRole()) && !req.getRole().equals(user.getRole())) {
+            return ApiResponse.fail("账号角色与所选端口不匹配");
         }
         if (!"ENABLED".equals(user.getStatus())) {
-            return ApiResponse.fail("璐﹀彿宸茶绂佺敤");
+            return ApiResponse.fail("该账号已被禁用");
         }
         return ApiResponse.ok(toLoginData(user));
     }
@@ -43,16 +47,19 @@ public class AuthController {
     @PostMapping("/register")
     public ApiResponse<Map<String, Object>> register(@RequestBody RegisterRequest req) {
         if (!StringUtils.hasText(req.getUsername()) || !StringUtils.hasText(req.getPassword())) {
-            return ApiResponse.fail("瀛﹀彿鍜屽瘑鐮佷笉鑳戒负绌?);
+            return ApiResponse.fail("请填写学号和密码");
         }
         if (!StringUtils.hasText(req.getRealName())) {
-            return ApiResponse.fail("濮撳悕涓嶈兘涓虹┖");
+            return ApiResponse.fail("请填写姓名");
+        }
+        if (!StringUtils.hasText(req.getCollege())) {
+            return ApiResponse.fail("请填写学院");
         }
         if (!req.getPassword().equals(req.getConfirmPassword())) {
-            return ApiResponse.fail("涓ゆ杈撳叆鐨勫瘑鐮佷笉涓€鑷?);
+            return ApiResponse.fail("两次输入的密码不一致");
         }
         if (userMapper.findByUsername(req.getUsername()) != null) {
-            return ApiResponse.fail("璇ュ鍙峰凡娉ㄥ唽");
+            return ApiResponse.fail("该账号已存在");
         }
         User user = new User();
         user.setUsername(req.getUsername().trim());
@@ -70,18 +77,14 @@ public class AuthController {
     @GetMapping("/me")
     public ApiResponse<User> me(@RequestParam(defaultValue = "student") String username) {
         User user = userMapper.findByUsername(username);
-        if (user == null) {
-            return ApiResponse.fail("鐢ㄦ埛涓嶅瓨鍦?);
-        }
+        if (user == null) return ApiResponse.fail("用户不存在");
         user.setPassword(null);
         return ApiResponse.ok(user);
     }
 
     @PutMapping("/profile")
     public ApiResponse<User> profile(@RequestBody User user) {
-        if (user.getId() == null) {
-            return ApiResponse.fail("缂哄皯鐢ㄦ埛 ID");
-        }
+        if (user.getId() == null) return ApiResponse.fail("缺少用户 ID");
         userMapper.updateProfile(user);
         User updated = userMapper.findById(user.getId());
         updated.setPassword(null);
@@ -95,6 +98,10 @@ public class AuthController {
         data.put("realName", user.getRealName());
         data.put("role", user.getRole());
         data.put("token", "demo-token-" + user.getRole().toLowerCase());
+        if ("DOCTOR".equals(user.getRole())) {
+            Doctor doctor = doctorMapper.findByUserId(user.getId());
+            if (doctor != null) data.put("doctorId", doctor.getId());
+        }
         return data;
     }
 }

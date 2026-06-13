@@ -2,13 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.campus.health.mapper.HealthArticleMapper">
   <select id="findPublished" resultType="com.campus.health.entity.HealthArticle">
-    select id,title,category,summary,content,status from health_articles where status='PUBLISHED' order by id desc
+    select id,title,category,summary,content,status,created_at as createdAt from health_articles where status='PUBLISHED' order by id desc
   </select>
   <select id="findAll" resultType="com.campus.health.entity.HealthArticle">
-    select id,title,category,summary,content,status from health_articles order by id desc
+    select id,title,category,summary,content,status,created_at as createdAt from health_articles order by id desc
   </select>
   <select id="findById" resultType="com.campus.health.entity.HealthArticle">
-    select id,title,category,summary,content,status from health_articles where id=#{id}
+    select id,title,category,summary,content,status,created_at as createdAt from health_articles where id=#{id}
   </select>
   <insert id="insert" useGeneratedKeys="true" keyProperty="id">
     insert into health_articles(title,category,summary,content,status) values(#{title},#{category},#{summary},#{content},#{status})

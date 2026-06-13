@@ -9,4 +9,5 @@ public class Announcement {
     private String type;
     private String content;
     private String status;
+    private String createdAt;
 }

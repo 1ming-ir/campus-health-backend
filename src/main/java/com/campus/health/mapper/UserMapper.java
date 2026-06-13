@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface UserMapper {
-    String COLUMNS = "id, username, password, real_name as realName, role, phone, status, college, class_name as className, gender, age, allergy_history as allergyHistory, medical_history as medicalHistory, emergency_contact as emergencyContact";
+    String COLUMNS = "id, username, password, real_name as realName, role, phone, status, college, class_name as className, gender, age, allergy_history as allergyHistory, medical_history as medicalHistory, emergency_contact as emergencyContact, created_at as createdAt";
 
     @Select("select " + COLUMNS + " from users where username=#{username}")
     User findByUsername(String username);
@@ -28,6 +28,12 @@ public interface UserMapper {
 
     @Update("update users set status=#{status} where id=#{id}")
     int updateStatus(@Param("id") Long id, @Param("status") String status);
+
+    @Update("update users set real_name=#{realName}, role=#{role}, phone=#{phone}, status=#{status}, college=#{college}, class_name=#{className}, gender=#{gender}, age=#{age}, allergy_history=#{allergyHistory}, medical_history=#{medicalHistory}, emergency_contact=#{emergencyContact} where id=#{id}")
+    int updateAdmin(User user);
+
+    @Update("update users set password=#{password} where id=#{id}")
+    int updatePassword(@Param("id") Long id, @Param("password") String password);
 
     @Update("update users set real_name=#{realName}, phone=#{phone}, college=#{college}, class_name=#{className}, gender=#{gender}, age=#{age}, allergy_history=#{allergyHistory}, medical_history=#{medicalHistory}, emergency_contact=#{emergencyContact} where id=#{id}")
     int updateProfile(User user);

@@ -29,18 +29,10 @@ public class AppointmentController {
 
     @PostMapping
     public ApiResponse<Appointment> create(@RequestBody AppointmentRequest req) {
-        if (req.getDoctorId() == null) {
-            return ApiResponse.fail("璇烽€夋嫨鍖荤敓");
-        }
-        if (!StringUtils.hasText(req.getAppointmentDate())) {
-            return ApiResponse.fail("璇烽€夋嫨棰勭害鏃ユ湡");
-        }
-        if (!StringUtils.hasText(req.getTimeSlot())) {
-            return ApiResponse.fail("璇烽€夋嫨棰勭害鏃堕棿娈?);
-        }
-        if (!StringUtils.hasText(req.getReason())) {
-            return ApiResponse.fail("璇峰～鍐欓绾﹀師鍥?);
-        }
+        if (req.getDoctorId() == null) return ApiResponse.fail("请选择医生");
+        if (!StringUtils.hasText(req.getAppointmentDate())) return ApiResponse.fail("请选择预约日期");
+        if (!StringUtils.hasText(req.getTimeSlot())) return ApiResponse.fail("请选择时间段");
+        if (!StringUtils.hasText(req.getReason()) || req.getReason().trim().length() < 5) return ApiResponse.fail("预约原因至少 5 个字");
         Appointment appointment = new Appointment();
         appointment.setStudentId(req.getStudentId() == null ? 1L : req.getStudentId());
         appointment.setDoctorId(req.getDoctorId());
@@ -70,10 +62,14 @@ public class AppointmentController {
     @PutMapping("/{id}/status")
     public ApiResponse<String> status(@PathVariable Long id, @RequestBody Map<String, String> body) {
         String status = body.getOrDefault("status", "FINISHED");
-        if (!ALLOWED_STATUS.contains(status)) {
-            return ApiResponse.fail("涓嶆敮鎸佺殑棰勭害鐘舵€?);
-        }
+        if (!ALLOWED_STATUS.contains(status)) return ApiResponse.fail("无效的预约状态");
         appointmentMapper.updateStatus(id, status);
-        return ApiResponse.ok("棰勭害鐘舵€佸凡鏇存柊");
+        return ApiResponse.ok("预约状态已更新");
+    }
+
+    @PutMapping("/{id}/cancel")
+    public ApiResponse<String> cancel(@PathVariable Long id, @RequestBody Map<String, Long> body) {
+        appointmentMapper.updateStatus(id, "CANCELLED");
+        return ApiResponse.ok("预约已取消");
     }
 }

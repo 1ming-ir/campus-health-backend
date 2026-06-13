@@ -11,4 +11,5 @@ public class Medicine {
     private String caution;
     private String prescriptionRequired;
     private String status;
+    private String createdAt;
 }
